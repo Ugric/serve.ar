@@ -1,0 +1,10 @@
+if ("--help" in program.args) do
+    term.log("-p <port>")
+    exit()
+
+let port = 3000
+
+for (i from 0 to program.args.length) do
+    if (program.args[i] == "-p") do
+        if (program.args.length > i+1) do
+            port = number(program.args[i+1])

@@ -1,0 +1,21 @@
+import "http.ar" as http
+import "config" as config
+
+let app = http.server()
+
+app.use(http.logger)
+
+let loadFile(req,res) = do
+    let requestPath = path.join([program.cwd,req.path])
+    if (path.exists(requestPath)) do
+        if (path.isDir(requestPath)) do
+            let requestPathIndex = path.join([requestPath, "index.html"])
+            if (path.exists(requestPathIndex) && (not path.isDir(requestPathIndex))) do
+                return res.sendFile(requestPathIndex)
+            else do
+                res.json(path.ReadDir(requestPath))
+        else do
+            return res.sendFile(requestPath)
+app.use(loadFile)
+app.port = config.port
+app.run()
