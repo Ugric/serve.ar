@@ -18,4 +18,4 @@ let loadFile(req,res) = do
             return res.sendFile(requestPath)
 app.use(loadFile)
 app.port = config.port
-app.run()
+if (program.main) app.run()
