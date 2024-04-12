@@ -1,9 +1,11 @@
 import "http.ar" as http
 import "config" as config
+import "neon.ar" as neon
 
 let app = http.server()
 
 app.use(http.logger)
+app.use(neon.middleware(path.join([path.parent(program.file.path), "templates"])))
 
 let loadFile(req,res) = do
     let requestPath = path.join([program.cwd,req.path])
@@ -13,9 +15,15 @@ let loadFile(req,res) = do
             if (path.exists(requestPathIndex) && (not path.isDir(requestPathIndex))) do
                 return res.sendFile(requestPathIndex)
             else do
-                res.json(path.ReadDir(requestPath))
+                let foldersAndFiles = path.ReadDir(requestPath)
+                foldersAndFiles = ['.','..'].concat(foldersAndFiles)
+                for (i from 0 to foldersAndFiles.length) do
+                    foldersAndFiles[i] = {path: path.join([req.path, foldersAndFiles[i]]), name:foldersAndFiles[i]}
+                res.render("folder.njk", {cwd:req.path, foldersAndFiles:foldersAndFiles})
         else do
             return res.sendFile(requestPath)
+    res.code = 404
+    return res.send("404 error: file not found")
 app.use(loadFile)
 app.port = config.port
 if (program.main) app.run()

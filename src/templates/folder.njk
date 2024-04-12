@@ -1,0 +1,8 @@
+<h1>{{ cwd }}</h1>
+<ul>
+    {% for item in foldersAndFiles %}
+        <li>
+            <a href="{{ item.path }}"><b>{{ item.name }}</b></a>
+        </li>
+    {% endfor %}
+</ul>
